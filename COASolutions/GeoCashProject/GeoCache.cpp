@@ -81,6 +81,8 @@ char E_W;
 float CourseGround;
 float Speed;
 
+void DMtoDDLongitude(String degreeMinutes, float& saveTo);
+void DMtoDDLatitude(String degreeMinutes, float& saveTo);
 /*
 Configuration settings.
 
@@ -387,13 +389,17 @@ bool ParseGPSStringData()
         Traveling++;
     }
     
-    if (GpsData[VALIDATION].c_str() == "V")
+    if (GpsData[VALIDATION].c_str()[0] == 'V')
         return false;
-        
-    Latitude = GpsData[LATITUDE].toFloat();
-    Longitude = GpsData[LONGITUDE].toFloat();
+    
+	DMtoDDLongitude(GpsData[LONGITUDE], Longitude);
+	DMtoDDLatitude(GpsData[LATITUDE], Latitude);
     N_S = GpsData[NS].c_str()[0];
     E_W = GpsData[EW].c_str()[0];
+	if (N_S == 'S')
+		Longitude *= -1;
+	if (E_W == 'W')
+		Latitude *= -1;
     Speed = GpsData[SPEED].toFloat();
     CourseGround = GpsData[COURSEGROUND].toFloat();
     
@@ -498,3 +504,34 @@ int main(void)
 	return(false);
 }
 
+void DMtoDDLongitude(String degreeMinutes, float& saveTo)
+{
+	String degrees, minutes;
+	for (unsigned int i = 0; i < degreeMinutes.length(); i++)
+	{
+		if (i  < 3)
+		degrees += degreeMinutes[i];
+		else
+		minutes += degreeMinutes[i];
+	}
+	float deg = degrees.toFloat();
+	float min = minutes.toFloat();
+
+	saveTo = deg + min / 60;
+}
+
+void DMtoDDLatitude(String degreeMinutes, float& saveTo)
+{
+	String degrees, minutes;
+	for (unsigned int i = 0; i < degreeMinutes.length(); i++)
+	{
+		if (i  < 2)
+		degrees += degreeMinutes[i];
+		else
+		minutes += degreeMinutes[i];
+	}
+	float deg = degrees.toFloat();
+	float min = minutes.toFloat();
+
+	saveTo = deg + min / 60;
+}
