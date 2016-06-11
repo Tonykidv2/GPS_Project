@@ -169,7 +169,100 @@ Sets target number, heading and distance on NeoPixel Display
 */
 void setNeoPixel(uint8_t target, float heading, float distance)
 {
+    //Clearing LEDs
+    for (int i = 0; i < strip.numLEDs; i++)
+    {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+        strip.show();
+    }
+    
 	// add code here0
+    int NUMLEDs = 6;
+    
+    if(distance < 100)
+    {
+        NUMLEDs = distance / 16.66;
+    }
+    
+    uint32_t color = 0;
+    if(target == 0)
+        color = strip.Color(255,0,0);
+        
+    else if(target == 1)
+        color = strip.Color(0,255,0);
+        
+    else if(target == 2)
+        color = strip.Color(0,0,255);
+        
+    else if(target == 3)
+        color = strip.Color(255,0,255);
+        
+    //More LEDs in the middle as you get farther less when you get closer
+    for (int i = 18; i < 18 + NUMLEDs; i++)
+    {
+        strip.setPixelColor(i, color);
+        strip.show();
+    }
+    
+    
+    //Which Direction Simple Arrows
+    if((heading > 330) || (heading > 0 && heading < 30))
+    {
+        strip.setPixelColor(9, strip.Color(255, 255, 255));
+        strip.setPixelColor(16, strip.Color(255, 255, 255));
+        strip.setPixelColor(25, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 30 &&  heading < 60)
+    {
+        strip.setPixelColor(8, strip.Color(255, 255, 255));
+        strip.setPixelColor(0, strip.Color(255, 255, 255));
+        strip.setPixelColor(1, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 60 && heading < 120)
+    {
+       strip.setPixelColor(4, strip.Color(255, 255, 255));
+       strip.setPixelColor(11, strip.Color(255, 255, 255));
+       strip.setPixelColor(13, strip.Color(255, 255, 255)); 
+    }
+    
+    else if(heading > 120 && heading < 150)
+    {
+        strip.setPixelColor(6, strip.Color(255, 255, 255));
+        strip.setPixelColor(7, strip.Color(255, 255, 255));
+        strip.setPixelColor(15, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 150 && heading < 210)
+    {
+        strip.setPixelColor(14, strip.Color(255, 255, 255));
+        strip.setPixelColor(23, strip.Color(255, 255, 255));
+        strip.setPixelColor(30, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 210 && heading < 240)
+    {
+        strip.setPixelColor(31, strip.Color(255, 255, 255));
+        strip.setPixelColor(38, strip.Color(255, 255, 255));
+        strip.setPixelColor(39, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 210 && heading < 240)
+    {
+        strip.setPixelColor(36, strip.Color(255, 255, 255));
+        strip.setPixelColor(29, strip.Color(255, 255, 255));
+        strip.setPixelColor(17, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 300 && heading < 330)
+    {
+        strip.setPixelColor(24, strip.Color(255, 255, 255));
+        strip.setPixelColor(32, strip.Color(255, 255, 255));
+        strip.setPixelColor(33, strip.Color(255, 255, 255));
+    }
+    
+    strip.show();
 }
 
 #endif	// NEO_ON
@@ -196,7 +289,7 @@ void getGPSMessage(void)
 
 	memset(cstr, 0, sizeof(cstr));
 		
-	// get nmea string
+	// get name string
 	while (true)
 	{
 		if (gps.peek() != -1)
@@ -296,7 +389,7 @@ bool ParseGPSStringData()
         Traveling++;
     }
     
-    if (GpsData[VALIDATION].c_str() == "V")
+    if (GpsData[VALIDATION].c_str()[0] == 'V')
         return false;
     
 	DMtoDDLongitude(GpsData[LONGITUDE], Longitude);
