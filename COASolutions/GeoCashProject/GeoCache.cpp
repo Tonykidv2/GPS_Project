@@ -70,7 +70,7 @@ A               // Mode A=Autonomous D=differential E=Estimated
 // Required
 #include "Arduino.h"
 #include <string.h>
-
+#include "LABLibrary.h"
 String GpsData[15];
 
 float Time;
