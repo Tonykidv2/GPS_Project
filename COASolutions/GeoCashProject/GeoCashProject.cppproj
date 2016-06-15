@@ -191,6 +191,9 @@
     <Compile Include="LABLibrary.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Source.cpp">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArduinoCore\ArduinoCore.cppproj">
