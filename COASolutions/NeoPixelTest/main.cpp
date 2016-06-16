@@ -99,12 +99,12 @@ void setNeoPixel(uint8_t target, float heading, float distance)
         strip.setPixelColor(39, strip.Color(255, 255, 255));
     }
     
-    else if(heading > 210 && heading < 240)
-    {
-        strip.setPixelColor(36, strip.Color(255, 255, 255));
-        strip.setPixelColor(29, strip.Color(255, 255, 255));
-        strip.setPixelColor(17, strip.Color(255, 255, 255));
-    }
+     else if(heading > 240 && heading < 300)
+     {
+         strip.setPixelColor(36, strip.Color(255, 255, 255));
+         strip.setPixelColor(29, strip.Color(255, 255, 255));
+         strip.setPixelColor(27, strip.Color(255, 255, 255));
+     }
     
     else if(heading > 300 && heading < 330)
     {
@@ -122,7 +122,7 @@ int main(void)
     uint32_t val = 123456;
     
     
-    
+    Serial.begin(115200);
     strip.begin();
     strip.setBrightness(20);
     strip.show(); // Initialize all pixels to 'off'
@@ -145,9 +145,12 @@ int main(void)
          //theaterChaseRainbow(50);
          if(TimeOut < millis())
          {
-             TimeOut += 100;
+             TimeOut += 10;
              head++;
-             
+             if(head > 360)
+                head = 0;
+                
+             Serial.println(head);
          }
          
          setNeoPixel(1, head, 500);

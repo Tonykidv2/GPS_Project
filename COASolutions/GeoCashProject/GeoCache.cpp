@@ -66,7 +66,7 @@ A               // Mode A=Autonomous D=differential E=Estimated
 #define EW 6
 #define SPEED 7
 #define COURSEGROUND 8
-#define PI 3.14159265358979323846264338327950288419716939937510
+//#define PI 3.14159265358979323846264338327950288419716939937510
 
 
 
@@ -84,15 +84,20 @@ char E_W;
 float CourseGround;
 float Speed;
 
+uint8_t target = 0;
+double heading = 20;
+double distance = 50;
+
 static const double DEG_TO_RAD = 0.017453292519943295769236907684886;
 static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
 static const double EARTH_RADIUS_IN_MILES = 3959;
 
 void DMtoDDLongitude(String degreeMinutes, float& saveTo);
 void DMtoDDLatitude(String degreeMinutes, float& saveTo);
+
 struct Position
 {
-	Position(double lat, double lon) : _lat(lat), _lon(lon) {}
+	//Position(double lat, double lon) : _lat(lat), _lon(lon) {}
 	void lat(double lat) { _lat = lat; }
 	double lat()const { return _lat; }
 	void lon(double lon) { _lon = lon; }
@@ -142,6 +147,7 @@ double distance_in_miles(const Position& from, const Position& to)
 {
 	return EARTH_RADIUS_IN_MILES * haversine(from, to);
 }
+
 /*
 Configuration settings.
 
@@ -152,9 +158,9 @@ all these libraries at the same time.  You are only permitted to
 have NEO_ON, GPS_ON and SDC_ON during the actual GeoCache Treasure
 Hunt.
 */
-#define NEO_ON 0		// NeoPixelShield
+#define NEO_ON 1		// NeoPixelShield
 #define TRM_ON 1		// SerialTerminal4
-#define ONE_ON 0		// 1Sheeld
+#define ONE_ON 1		// 1Sheeld
 #define SDC_ON 0		// SecureDigital
 #define GPS_ON 1		// GPSShield (off = simulated)
 
@@ -222,14 +228,13 @@ These are GPS command messages (only a few are used).
 #endif // GPS_ON
 
 #if NEO_ON
-
 /*
 Sets target number, heading and distance on NeoPixel Display
 */
 void setNeoPixel(uint8_t target, float heading, float distance)
 {
     //Clearing LEDs
-    for (int i = 0; i < strip.numLEDs; i++)
+    for (int i = 0; i < 40; i++)
     {
         strip.setPixelColor(i, strip.Color(0, 0, 0));
         strip.show();
@@ -307,11 +312,11 @@ void setNeoPixel(uint8_t target, float heading, float distance)
         strip.setPixelColor(39, strip.Color(255, 255, 255));
     }
     
-    else if(heading > 210 && heading < 240)
+    else if(heading > 240 && heading < 300)
     {
         strip.setPixelColor(36, strip.Color(255, 255, 255));
         strip.setPixelColor(29, strip.Color(255, 255, 255));
-        strip.setPixelColor(17, strip.Color(255, 255, 255));
+        strip.setPixelColor(27, strip.Color(255, 255, 255));
     }
     
     else if(heading > 300 && heading < 330)
@@ -439,7 +444,11 @@ void getGPSMessage(void)
 bool ParseGPSStringData()
 {
     int Traveling = 0;
-    char* token = strtok(cstr, ",");
+    char data[GPS_RX_BUFSIZ];
+    
+    memcpy(data, cstr, sizeof(cstr));
+    
+    char* token = strtok(data, ",");
     
     while(token != NULL)
     {
@@ -456,9 +465,9 @@ bool ParseGPSStringData()
     N_S = GpsData[NS].c_str()[0];
     E_W = GpsData[EW].c_str()[0];
 	if (N_S == 'S')
-		Longitude *= -1;
-	if (E_W == 'W')
 		Latitude *= -1;
+	if (E_W == 'W')
+		Longitude *= -1;
     Speed = GpsData[SPEED].toFloat();
     CourseGround = GpsData[COURSEGROUND].toFloat();
     
@@ -481,8 +490,11 @@ Return:
 int main(void)
 {
 	// variables
-	
-
+	Position OurPosition;
+    Position Destination;
+    Destination.lon(-81.3020153);
+    Destination.lat(28.5945306);
+    
 	init();
 
 	// init target button
@@ -533,9 +545,12 @@ int main(void)
 			// parse message parameters
 			ParseGPSStringData();
 			// calculated destination heading
-			
+			OurPosition.lat(Latitude);
+            OurPosition.lon(Longitude);
+            heading = GreatCircleBearing(OurPosition, Destination);
+            
 			// calculated destination distance
-			
+			distance = distance_in_meters(OurPosition, Destination);
 			#if SDC_ON
 			// write current position to SecureDigital then flush
 			#endif
@@ -557,6 +572,11 @@ int main(void)
 		#if ONE_ON
 		// print debug information to OneSheeld Terminal
 		if (serialEventRun) serialEventRun();
+        Terminal.println(cstr);
+        Terminal.println(heading);
+        Terminal.println(distance);
+        Terminal.println(Longitude);
+        Terminal.println(Latitude);
 		#endif		
 	}
 	
