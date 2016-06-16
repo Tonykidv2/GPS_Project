@@ -19,6 +19,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "GeoCashProject", "GeoCashPr
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SoftwareSerial", "SoftwareSerial\SoftwareSerial.cppproj", "{01562194-0645-47C4-BF54-F6C462481760}"
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SecureDigital", "SecureDigital\SecureDigital.cppproj", "{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -57,6 +59,10 @@ Global
 		{01562194-0645-47C4-BF54-F6C462481760}.Debug|AVR.Build.0 = Debug|AVR
 		{01562194-0645-47C4-BF54-F6C462481760}.Release|AVR.ActiveCfg = Release|AVR
 		{01562194-0645-47C4-BF54-F6C462481760}.Release|AVR.Build.0 = Release|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Debug|AVR.ActiveCfg = Debug|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Debug|AVR.Build.0 = Debug|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Release|AVR.ActiveCfg = Release|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

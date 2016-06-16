@@ -73,6 +73,9 @@ A               // Mode A=Autonomous D=differential E=Estimated
 // Required
 #include "Arduino.h"
 #include <string.h>
+#include <math.h>
+#include "SecureDigital.h"
+
 
 String GpsData[15];
 
@@ -87,6 +90,12 @@ float Speed;
 static const double DEG_TO_RAD = 0.017453292519943295769236907684886;
 static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
 static const double EARTH_RADIUS_IN_MILES = 3959;
+
+SDClass myFile;
+int fileNumber = 100;
+//String fileName = "myFile";
+char fileName[55] = "myFile";
+File m_file;
 
 void DMtoDDLongitude(String degreeMinutes, float& saveTo);
 void DMtoDDLatitude(String degreeMinutes, float& saveTo);
@@ -466,6 +475,60 @@ bool ParseGPSStringData()
 }
 
 
+void WriteToSDCard(Position pos, double dist_km)
+{
+		String str1, str2, str3;
+		//sprintf(str1, "%d", pos.lat());
+		//sprintf(str2, "%d", pos.lon());
+		//sprintf(str3, "%d", dist_km);
+		str1 = String(pos.lat());
+		str2 = String(pos.lon());
+		str3 = String(dist_km);
+		
+		if(m_file)
+		{
+			m_file.print(str1.c_str());
+			m_file.print(", ");
+			m_file.print(str2.c_str());
+			m_file.print(", ");
+			m_file.println(str3.c_str());
+			
+			m_file.flush();
+			//m_file.close();
+		}
+}
+
+bool checkTheFile()
+{
+	/*while(myFile.exists(&fileName[0]))
+	{
+		fileName[7]++;
+		if(fileName >= 10)
+		{
+			fileName[7] = 0;
+			fileName[6]++;
+		}
+	}
+
+	myFile.begin();
+	m_file = myFile.open(fileName, O_APPEND | O_WRITE);*/
+
+	myFile.begin();
+
+	for(int i = 0; i < fileNumber; i++)
+	{
+		sprintf(fileName, "myFile%20d", fileNumber);
+			
+		if(!(myFile.exists(&fileName[0])))
+		{
+			m_file = myFile.open(fileName, O_APPEND | O_WRITE);	
+			break;
+		}
+	}
+	
+	return true;
+}
+
 /*
 Main Program Entry
 
@@ -482,9 +545,13 @@ int main(void)
 {
 	// variables
 	
-
 	init();
 
+	Position m_pos, Flag1, Flag2, Flag3, Flag4;
+	
+
+	double distance, bearing;
+	
 	// init target button
 	
 	#if TRM_ON
@@ -510,6 +577,7 @@ int main(void)
 	sequential number of the file.  The filename can not be more than 8
 	chars in length (excluding the ".txt").
 	*/
+	checkTheFile();
 	#endif
 	
 	// enable GPS sending GPRMC message
@@ -532,12 +600,16 @@ int main(void)
 		{
 			// parse message parameters
 			ParseGPSStringData();
+
 			// calculated destination heading
-			
+			//bearing = GreatCircleBearing(m_pos, Flag1);
+
 			// calculated destination distance
+			//distance = haversine(m_pos);
 			
 			#if SDC_ON
 			// write current position to SecureDigital then flush
+			//WriteToSDCard(m_pos, distance);
 			#endif
 
 			break;
