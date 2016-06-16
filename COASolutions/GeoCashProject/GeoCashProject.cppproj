@@ -180,11 +180,6 @@
       <Project>{16068e77-23a6-4315-a35f-d71097ca8ee5}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\OneSheeld\OneSheeld.cppproj">
-      <Name>OneSheeld</Name>
-      <Project>{4c911888-7dc7-432d-99f4-eaded8543758}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\SecureDigital\SecureDigital.cppproj">
       <Name>SecureDigital</Name>
       <Project>{9a914a2a-d2bc-4b67-84a1-397a4491f6f0}</Project>
