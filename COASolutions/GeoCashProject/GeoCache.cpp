@@ -101,7 +101,7 @@ void DMtoDDLongitude(String degreeMinutes, float& saveTo);
 void DMtoDDLatitude(String degreeMinutes, float& saveTo);
 struct Position
 {
-	Position(double lat, double lon) : _lat(lat), _lon(lon) {}
+	//Position(double lat, double lon) : _lat(lat), _lon(lon) {}
 	void lat(double lat) { _lat = lat; }
 	double lat()const { return _lat; }
 	void lon(double lon) { _lon = lon; }
