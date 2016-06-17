@@ -60,16 +60,16 @@ double distance_in_miles(const Position& from, const Position& to)
 	return EARTH_RADIUS_IN_MILES * haversine(from, to);
 }
 
-int main()
-{
-	double meters = distance_in_meters(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
-	double miles = distance_in_miles(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
-
-	double temp = GreatCircleBearing(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
-	Serial.print("Distance in meters is: " );
-	Serial.println(meters);
-	Serial.print("\nDistance in miles is: ");
-	Serial.println(miles);
-	Serial.print("\nBearing is: " );
-	Serial.println(temp);
-}
+//int main()
+//{
+	//double meters = distance_in_meters(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
+	//double miles = distance_in_miles(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
+//
+	//double temp = GreatCircleBearing(Position(45.5371781, -122.6500385), Position(51.5141667, 0.0936111));
+	//Serial.print("Distance in meters is: " );
+	//Serial.println(meters);
+	//Serial.print("\nDistance in miles is: ");
+	//Serial.println(miles);
+	//Serial.print("\nBearing is: " );
+	//Serial.println(temp);
+//}

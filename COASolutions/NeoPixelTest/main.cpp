@@ -119,14 +119,14 @@ void setNeoPixel(uint8_t target, float heading, float distance)
 int main(void)
 {
     init();
-    uint32_t val = 123456;
+    //uint32_t val = 123456;
     
     
     Serial.begin(115200);
     strip.begin();
     strip.setBrightness(20);
     strip.show(); // Initialize all pixels to 'off'
-    int TimeOut = millis() + 100;
+    unsigned int TimeOut = millis() + 100;
     int head = 0;
     /* Replace with your application code */
     while (true) 
@@ -195,14 +195,14 @@ void rainbowCycle(uint8_t wait) {
 void theaterChase(uint32_t c, uint8_t wait) {
     for (int j=0; j<10; j++) {  //do 10 cycles of chasing
         for (int q=0; q < 3; q++) {
-            for (int i=0; i < strip.numPixels(); i=i+3) {
+            for (unsigned int i=0; i < strip.numPixels(); i=i+3) {
                 strip.setPixelColor(i+q, c);    //turn every third pixel on
             }
             strip.show();
             
             delay(wait);
             
-            for (int i=0; i < strip.numPixels(); i=i+3) {
+            for (unsigned int i=0; i < strip.numPixels(); i=i+3) {
                 strip.setPixelColor(i+q, 0);        //turn every third pixel off
             }
         }
@@ -213,14 +213,14 @@ void theaterChase(uint32_t c, uint8_t wait) {
 void theaterChaseRainbow(uint8_t wait) {
     for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
         for (int q=0; q < 3; q++) {
-            for (int i=0; i < strip.numPixels(); i=i+3) {
+            for (unsigned int i=0; i < strip.numPixels(); i=i+3) {
                 strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
             }
             strip.show();
             
             delay(wait);
             
-            for (int i=0; i < strip.numPixels(); i=i+3) {
+            for (unsigned int i=0; i < strip.numPixels(); i=i+3) {
                 strip.setPixelColor(i+q, 0);        //turn every third pixel off
             }
         }

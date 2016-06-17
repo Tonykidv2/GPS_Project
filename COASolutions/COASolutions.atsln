@@ -13,11 +13,13 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "NeoPixelTest", "NeoPixelTes
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "NeoPixel", "NeoPixel\NeoPixel.cppproj", "{16068E77-23A6-4315-A35F-D71097CA8EE5}"
 EndProject
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "OneSheeld", "OneSheeld\OneSheeld.cppproj", "{4C911888-7DC7-432D-99F4-EADED8543758}"
-EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "GeoCashProject", "GeoCashProject\GeoCashProject.cppproj", "{28356B03-DAED-43DE-B083-1EBE76C0EA8C}"
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SoftwareSerial", "SoftwareSerial\SoftwareSerial.cppproj", "{01562194-0645-47C4-BF54-F6C462481760}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "SecureDigital", "SecureDigital\SecureDigital.cppproj", "{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}"
+EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "OneSheeld", "OneSheeld\OneSheeld.cppproj", "{4C911888-7DC7-432D-99F4-EADED8543758}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +47,6 @@ Global
 		{16068E77-23A6-4315-A35F-D71097CA8EE5}.Debug|AVR.Build.0 = Debug|AVR
 		{16068E77-23A6-4315-A35F-D71097CA8EE5}.Release|AVR.ActiveCfg = Release|AVR
 		{16068E77-23A6-4315-A35F-D71097CA8EE5}.Release|AVR.Build.0 = Release|AVR
-		{4C911888-7DC7-432D-99F4-EADED8543758}.Debug|AVR.ActiveCfg = Debug|AVR
-		{4C911888-7DC7-432D-99F4-EADED8543758}.Debug|AVR.Build.0 = Debug|AVR
-		{4C911888-7DC7-432D-99F4-EADED8543758}.Release|AVR.ActiveCfg = Release|AVR
-		{4C911888-7DC7-432D-99F4-EADED8543758}.Release|AVR.Build.0 = Release|AVR
 		{28356B03-DAED-43DE-B083-1EBE76C0EA8C}.Debug|AVR.ActiveCfg = Debug|AVR
 		{28356B03-DAED-43DE-B083-1EBE76C0EA8C}.Debug|AVR.Build.0 = Debug|AVR
 		{28356B03-DAED-43DE-B083-1EBE76C0EA8C}.Release|AVR.ActiveCfg = Release|AVR
@@ -57,6 +55,14 @@ Global
 		{01562194-0645-47C4-BF54-F6C462481760}.Debug|AVR.Build.0 = Debug|AVR
 		{01562194-0645-47C4-BF54-F6C462481760}.Release|AVR.ActiveCfg = Release|AVR
 		{01562194-0645-47C4-BF54-F6C462481760}.Release|AVR.Build.0 = Release|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Debug|AVR.ActiveCfg = Debug|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Debug|AVR.Build.0 = Debug|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Release|AVR.ActiveCfg = Release|AVR
+		{9A914A2A-D2BC-4B67-84A1-397A4491F6F0}.Release|AVR.Build.0 = Release|AVR
+		{4C911888-7DC7-432D-99F4-EADED8543758}.Debug|AVR.ActiveCfg = Debug|AVR
+		{4C911888-7DC7-432D-99F4-EADED8543758}.Debug|AVR.Build.0 = Debug|AVR
+		{4C911888-7DC7-432D-99F4-EADED8543758}.Release|AVR.ActiveCfg = Release|AVR
+		{4C911888-7DC7-432D-99F4-EADED8543758}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

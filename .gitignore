@@ -8,3 +8,4 @@ ipch
 *.db
 *.opensdf
 *.user
+/COASolutions/.vs/COASolutions/v14/*.atsuo

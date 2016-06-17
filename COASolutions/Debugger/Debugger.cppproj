@@ -163,11 +163,6 @@
       <Project>{ce545fe4-df2e-4190-a21a-5aceb2957ba6}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\OneSheeld\OneSheeld.cppproj">
-      <Name>OneSheeld</Name>
-      <Project>{4c911888-7dc7-432d-99f4-eaded8543758}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

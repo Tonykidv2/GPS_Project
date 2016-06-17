@@ -66,14 +66,17 @@ A               // Mode A=Autonomous D=differential E=Estimated
 #define EW 6
 #define SPEED 7
 #define COURSEGROUND 8
-//#define PI 3.14159265358979323846264338327950288419716939937510
+#define PIe 3.14159265358979323846264338327950288419716939937510
 
 
 
 // Required
 #include "Arduino.h"
 #include <string.h>
-#include "LABLibrary.h"
+#include <math.h>
+//#include "SecureDigital.h"
+
+
 String GpsData[15];
 
 float Time;
@@ -91,6 +94,8 @@ double distance = 50;
 static const double DEG_TO_RAD = 0.017453292519943295769236907684886;
 static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
 static const double EARTH_RADIUS_IN_MILES = 3959;
+
+
 
 void DMtoDDLongitude(String degreeMinutes, float& saveTo);
 void DMtoDDLatitude(String degreeMinutes, float& saveTo);
@@ -125,7 +130,7 @@ double GreatCircleBearing(const Position& from, const Position& to)
 	double lon1 = (from.lon()) * DEG_TO_RAD;
 	double lon2 = (to.lon()) * DEG_TO_RAD;
 
-	double temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PI;
+	double temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PIe;
 	if (temp < 0)
 	{
 		temp += 360;
@@ -192,6 +197,68 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, NEO_TX, NEO_GRB + NEO_KHZ800);
 
 #if SDC_ON
 #include "SecureDigital.h"
+
+
+SDClass myFile;
+int fileNumber = 100;
+//String fileName = "myFile";
+char fileName[55] = "myFile";
+File m_file;
+
+void WriteToSDCard(Position pos, double dist_km)
+{
+		String str1, str2, str3;
+		//sprintf(str1, "%d", pos.lat());
+		//sprintf(str2, "%d", pos.lon());
+		//sprintf(str3, "%d", dist_km);
+		str1 = String(pos.lat());
+		str2 = String(pos.lon());
+		str3 = String(dist_km);
+		
+		if(m_file)
+		{
+			m_file.print(str1.c_str());
+			m_file.print(", ");
+			m_file.print(str2.c_str());
+			m_file.print(", ");
+			m_file.println(str3.c_str());
+			
+			m_file.flush();
+			//m_file.close();
+		}
+}
+
+bool checkTheFile()
+{
+	/*while(myFile.exists(&fileName[0]))
+	{
+		fileName[7]++;
+		if(fileName >= 10)
+		{
+			fileName[7] = 0;
+			fileName[6]++;
+		}
+	}
+
+	myFile.begin();
+	m_file = myFile.open(fileName, O_APPEND | O_WRITE);*/
+
+	myFile.begin();
+
+	for(int i = 0; i < fileNumber; i++)
+	{
+		sprintf(fileName, "myFile%20d", fileNumber);
+			
+		if(!(myFile.exists(&fileName[0])))
+		{
+			m_file = myFile.open(fileName, O_APPEND | O_WRITE);	
+			break;
+		}
+	}
+	
+	return true;
+}
+
 #endif
 
 /*
@@ -475,6 +542,7 @@ bool ParseGPSStringData()
 }
 
 
+
 /*
 Main Program Entry
 
@@ -496,9 +564,10 @@ int main(void)
     Destination.lat(28.5945306);
     
 	init();
-
-	// init target button
 	
+	// init target button
+
+
 	#if TRM_ON
 	Serial.begin(115200);
 	#endif	
@@ -522,7 +591,8 @@ int main(void)
 	sequential number of the file.  The filename can not be more than 8
 	chars in length (excluding the ".txt").
 	*/
-	#endif
+	//checkTheFile();
+	#endif                                                                                                                                                                                                   
 	
 	// enable GPS sending GPRMC message
 	#if GPS_ON
@@ -544,6 +614,7 @@ int main(void)
 		{
 			// parse message parameters
 			ParseGPSStringData();
+
 			// calculated destination heading
 			OurPosition.lat(Latitude);
             OurPosition.lon(Longitude);
@@ -551,8 +622,10 @@ int main(void)
             
 			// calculated destination distance
 			distance = distance_in_meters(OurPosition, Destination);
+            
 			#if SDC_ON
 			// write current position to SecureDigital then flush
+			//WriteToSDCard(m_pos, distance);
 			#endif
 
 			break;
