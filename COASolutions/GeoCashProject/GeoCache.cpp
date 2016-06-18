@@ -216,11 +216,11 @@ void WriteToSDCard(Position pos, double dist_km)
 		
 		if(m_file)
 		{
-			m_file.print(str1.c_str());
+			m_file.print(str1.c_str(), 6);
 			m_file.print(", ");
-			m_file.print(str2.c_str());
+			m_file.print(str2.c_str(), 6);
 			m_file.print(", ");
-			m_file.println(str3.c_str());
+			m_file.println(str3.c_str(), 6);
 			
 			m_file.flush();
 			//m_file.close();
