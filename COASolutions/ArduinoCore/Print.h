@@ -31,7 +31,7 @@
 #define OCT 8
 #define BIN 2
 
-class Print
+class __attribute__((packed)) Print
 {
   private:
     int write_error;

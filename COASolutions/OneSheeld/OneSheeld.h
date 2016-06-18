@@ -32,7 +32,7 @@
 #define START_OF_FRAME  0xFF
 #define END_OF_FRAME 	0x00
 //Library Version
-#define LIBRARY_VERSION 10
+#define LIBRARY_VERSION 13
 //Time between sending Frames
 #define TIME_GAP		200UL
 
@@ -47,11 +47,13 @@
 #define CHECK_APP_CONNECTION	0x02
 #define CALLBACK_ENTERED		0x03
 #define CALLBACK_EXITED			0x04
+#define LIBRARY_TESTING_RESPONSE	0x05
 //Input function ID's 
 //Checking Bluetooth connection
 #define CONNECTION_CHECK_FUNCTION 0x01
 #define DISCONNECTION_CHECK_FUNCTION 0x02
 #define LIBRARY_VERSION_REQUEST	0x03
+#define LIBRARY_TESTING_REQUEST	0x05
 
 
 //Numer of Shields
@@ -107,7 +109,7 @@ class OneSheeldClass
 
 public:
     
-	OneSheeldClass(Stream &s);
+	OneSheeldClass();
 	//Blocking function
 	void waitForAppConnection();
 	//Check connection
@@ -125,24 +127,27 @@ public:
 	void processInput();		
 	//Library Starter
 	void begin();
+	void begin(Stream &s);
 	//Adding objects in array 
 	static void addToShieldsArray(ShieldParent *);
 	// #ifdef INTERNET_SHIELD
 	static void addToUnSentRequestsArray(HttpRequest *);
 	// #endif
 	static bool isInitialized();
+	static bool isSoftwareSerial();
 	//Frame Sender
 	void sendShieldFrame(byte , byte ,byte , byte , ...);
 	void sendShieldFrame(byte , byte , byte , byte , FunctionArg ** );
 	void setOnNewShieldFrame(void (*)(byte, byte, byte, byte *,byte **));
 	void setOnNewSerialData(void (*)(byte));
 	//PulseWidthModulation Getter 
-	unsigned char analogRead(int );	 
-	Stream & OneSheeldSerial;
+	unsigned char analogRead(int );	
 	void delay(unsigned long);
 	bool isCallbacksInterruptsSet();
 	void enableCallbacksInterrupts();
 	void disableCallbacksInterrupts();
+	byte getVerificationByte();
+	static Stream * OneSheeldSerial;
 private:
 	//Reserve Variables
 	FloatUnion convertFloatUnion;
@@ -152,6 +157,7 @@ private:
 	bool isAppConnectionCallBack;
 	bool isShieldFrameCallback;
 	bool isSerialDataCallback;
+	bool dontDelay;
 	static bool isFirstFrame;
 	bool framestart;
 	static bool inACallback;
@@ -174,6 +180,7 @@ private:
 	static byte requestsCounter;
 	//Is constructor called
 	static bool isInit;
+	static bool isSws;
 	//Checker variable 
 	static unsigned long lastTimeFrameSent;
 	//Array of pointers to Parents
@@ -185,6 +192,7 @@ private:
 	//Send Incomming Data to shields
 	void sendToShields();
 	void begin(long baudRate);
+	void init();
 	void freeMemoryAllocated();
 	void processFrame();
 	void (*isAppConnectedCallBack)(bool);
@@ -193,7 +201,8 @@ private:
 	void enteringACallback();
 	void exitingACallback();
 	bool isInACallback();
-	void processInput(int byte);
+	void processInput(int);
+	void oneSheeldWrite(byte data);
 friend class ShieldParent;
 };
 //Extern Object

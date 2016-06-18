@@ -17,7 +17,7 @@ int main(void)
 {
     init();
     OneSheeld.begin();
-    uint8_t val = 123456;
+    //uint8_t val = 123456;
     //Logger.stop();
     //Logger.start();
     /* Replace with your application code */
