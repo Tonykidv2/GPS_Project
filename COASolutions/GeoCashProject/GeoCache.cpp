@@ -500,8 +500,6 @@ void getGPSMessage(void)
 	
 	memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
     
-
-
 	return;	
 }
 
@@ -590,7 +588,7 @@ int main(void)
 	sequential number of the file.  The filename can not be more than 8
 	chars in length (excluding the ".txt").
 	*/
-	//checkTheFile();
+	checkTheFile();
 	#endif                                                                                                                                                                                                   
 	
 	// enable GPS sending GPRMC message
@@ -624,7 +622,7 @@ int main(void)
             
 			#if SDC_ON
 			// write current position to SecureDigital then flush
-			//WriteToSDCard(m_pos, distance);
+			WriteToSDCard(OurPosition, distance);
 			#endif
 
 			break;
