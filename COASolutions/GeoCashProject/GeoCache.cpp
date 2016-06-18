@@ -4,16 +4,16 @@ GeoCache Hunt Project (GeoCache.cpp)
 
 This is skeleton code provided as a project development guideline only.  You
 are not required to follow this coding structure.  You are free to implement
-your project however you wish.  
+your project however you wish.
 
 List Team Members Here:
 
-	1.
-	2.
-	3.
-	4.
-	
-NOTES: 
+1.
+2.
+3.
+4.
+
+NOTES:
 
 You only have 32k of program space and 2k of data space.  You must
 use your program and data space wisely and sparingly.  You must also be
@@ -24,7 +24,7 @@ The Arduino GCC sprintf() does not support printing floats or doubles.  You shou
 consider using sprintf(), dtostrf(), strtok() and strtod() for message string
 parsing and converting between floats and strings.
 
-The GPS provides latitude and longitude in degrees minutes format (DDDMM.MMMM).  
+The GPS provides latitude and longitude in degrees minutes format (DDDMM.MMMM).
 You will need convert it to Decimal Degrees format (DDD.DDDD).  The switch on the
 GPS Shield must be set to the "Soft Serial" position, else you will not receive
 any GPS messages.
@@ -35,8 +35,8 @@ Following is the GPS Shield "GPRMC" Message Structure.  This message is received
 once a second.  You must parse the message to obtain the parameters required for
 the GeoCache project.  GPS provides coordinates in Degrees Minutes (DDDMM.MMMM).
 The coordinates in the following GPRMC sample message, after converting to Decimal
-Degrees format(DDD.DDDDDD) is latitude(23.118757) and longitude(120.274060).  By 
-the way, this coordinate is GlobaTop Technology in Tiawan, who designed and 
+Degrees format(DDD.DDDDDD) is latitude(23.118757) and longitude(120.274060).  By
+the way, this coordinate is GlobaTop Technology in Tiawan, who designed and
 manufactured the GPS Chip.
 
 "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C/r/n"
@@ -156,7 +156,7 @@ double distance_in_miles(const Position& from, const Position& to)
 /*
 Configuration settings.
 
-These defines makes it easy to enable/disable certain capabilities 
+These defines makes it easy to enable/disable certain capabilities
 during the development and debugging cycle of this project.  There
 may not be sufficient room in the PROGRAM or DATA memory to enable
 all these libraries at the same time.  You are only permitted to
@@ -177,6 +177,7 @@ Hunt.
 // GPS message buffer
 #define GPS_RX_BUFSIZ	128
 char cstr[GPS_RX_BUFSIZ];
+char pstr[GPS_RX_BUFSIZ] = 0;
 
 #if GPS_ON
 #include "SoftwareSerial.h"
@@ -206,37 +207,37 @@ File m_file;
 
 void WriteToSDCard(Position pos, double dist_km)
 {
-		String str1, str2, str3;
-		//sprintf(str1, "%d", pos.lat());
-		//sprintf(str2, "%d", pos.lon());
-		//sprintf(str3, "%d", dist_km);
-		str1 = String(pos.lat());
-		str2 = String(pos.lon());
-		str3 = String(dist_km);
+	String str1, str2, str3;
+	//sprintf(str1, "%d", pos.lat());
+	//sprintf(str2, "%d", pos.lon());
+	//sprintf(str3, "%d", dist_km);
+	str1 = String(pos.lat());
+	str2 = String(pos.lon());
+	str3 = String(dist_km);
+	
+	if(m_file)
+	{
+		m_file.print(str1.c_str(), 6);
+		m_file.print(", ");
+		m_file.print(str2.c_str(), 6);
+		m_file.print(", ");
+		m_file.println(str3.c_str(), 6);
 		
-		if(m_file)
-		{
-			m_file.print(str1.c_str(), 6);
-			m_file.print(", ");
-			m_file.print(str2.c_str(), 6);
-			m_file.print(", ");
-			m_file.println(str3.c_str(), 6);
-			
-			m_file.flush();
-			//m_file.close();
-		}
+		m_file.flush();
+		//m_file.close();
+	}
 }
 
 bool checkTheFile()
 {
 	/*while(myFile.exists(&fileName[0]))
 	{
-		fileName[7]++;
-		if(fileName >= 10)
-		{
-			fileName[7] = 0;
-			fileName[6]++;
-		}
+	fileName[7]++;
+	if(fileName >= 10)
+	{
+	fileName[7] = 0;
+	fileName[6]++;
+	}
 	}
 
 	myFile.begin();
@@ -247,10 +248,10 @@ bool checkTheFile()
 	for(int i = 0; i < fileNumber; i++)
 	{
 		sprintf(fileName, "myFile%20d", fileNumber);
-			
+		
 		if(!(myFile.exists(&fileName[0])))
 		{
-			m_file = myFile.open(fileName, O_APPEND | O_WRITE);	
+			m_file = myFile.open(fileName, O_APPEND | O_WRITE);
 			break;
 		}
 	}
@@ -299,100 +300,100 @@ Sets target number, heading and distance on NeoPixel Display
 */
 void setNeoPixel(uint8_t target, float heading, float distance)
 {
-    //Clearing LEDs
-    for (int i = 0; i < 40; i++)
-    {
-        strip.setPixelColor(i, strip.Color(0, 0, 0));
-        strip.show();
-    }
-    
+	//Clearing LEDs
+	for (int i = 0; i < 40; i++)
+	{
+		strip.setPixelColor(i, strip.Color(0, 0, 0));
+		strip.show();
+	}
+	
 	// add code here0
-    int NUMLEDs = 6;
-    
-    if(distance < 100)
-    {
-        NUMLEDs = distance / 16.66;
-    }
-    
-    uint32_t color = 0;
-    if(target == 0)
-        color = strip.Color(255,0,0);
-        
-    else if(target == 1)
-        color = strip.Color(0,255,0);
-        
-    else if(target == 2)
-        color = strip.Color(0,0,255);
-        
-    else if(target == 3)
-        color = strip.Color(255,0,255);
-        
-    //More LEDs in the middle as you get farther less when you get closer
-    for (int i = 18; i < 18 + NUMLEDs; i++)
-    {
-        strip.setPixelColor(i, color);
-        strip.show();
-    }
-    
-    
-    //Which Direction Simple Arrows
-    if((heading > 330) || (heading > 0 && heading < 30))
-    {
-        strip.setPixelColor(9, strip.Color(255, 255, 255));
-        strip.setPixelColor(16, strip.Color(255, 255, 255));
-        strip.setPixelColor(25, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 30 &&  heading < 60)
-    {
-        strip.setPixelColor(8, strip.Color(255, 255, 255));
-        strip.setPixelColor(0, strip.Color(255, 255, 255));
-        strip.setPixelColor(1, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 60 && heading < 120)
-    {
-       strip.setPixelColor(4, strip.Color(255, 255, 255));
-       strip.setPixelColor(11, strip.Color(255, 255, 255));
-       strip.setPixelColor(13, strip.Color(255, 255, 255)); 
-    }
-    
-    else if(heading > 120 && heading < 150)
-    {
-        strip.setPixelColor(6, strip.Color(255, 255, 255));
-        strip.setPixelColor(7, strip.Color(255, 255, 255));
-        strip.setPixelColor(15, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 150 && heading < 210)
-    {
-        strip.setPixelColor(14, strip.Color(255, 255, 255));
-        strip.setPixelColor(23, strip.Color(255, 255, 255));
-        strip.setPixelColor(30, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 210 && heading < 240)
-    {
-        strip.setPixelColor(31, strip.Color(255, 255, 255));
-        strip.setPixelColor(38, strip.Color(255, 255, 255));
-        strip.setPixelColor(39, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 240 && heading < 300)
-    {
-        strip.setPixelColor(36, strip.Color(255, 255, 255));
-        strip.setPixelColor(29, strip.Color(255, 255, 255));
-        strip.setPixelColor(27, strip.Color(255, 255, 255));
-    }
-    
-    else if(heading > 300 && heading < 330)
-    {
-        strip.setPixelColor(24, strip.Color(255, 255, 255));
-        strip.setPixelColor(32, strip.Color(255, 255, 255));
-        strip.setPixelColor(33, strip.Color(255, 255, 255));
-    }
-    
-    strip.show();
+	int NUMLEDs = 6;
+	
+	if(distance < 100)
+	{
+		NUMLEDs = distance / 16.66;
+	}
+	
+	uint32_t color = 0;
+	if(target == 0)
+	color = strip.Color(255,0,0);
+	
+	else if(target == 1)
+	color = strip.Color(0,255,0);
+	
+	else if(target == 2)
+	color = strip.Color(0,0,255);
+	
+	else if(target == 3)
+	color = strip.Color(255,0,255);
+	
+	//More LEDs in the middle as you get farther less when you get closer
+	for (int i = 18; i < 18 + NUMLEDs; i++)
+	{
+		strip.setPixelColor(i, color);
+		strip.show();
+	}
+	
+	
+	//Which Direction Simple Arrows
+	if((heading > 330) || (heading > 0 && heading < 30))
+	{
+		strip.setPixelColor(9, strip.Color(255, 255, 255));
+		strip.setPixelColor(16, strip.Color(255, 255, 255));
+		strip.setPixelColor(25, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 30 &&  heading < 60)
+	{
+		strip.setPixelColor(8, strip.Color(255, 255, 255));
+		strip.setPixelColor(0, strip.Color(255, 255, 255));
+		strip.setPixelColor(1, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 60 && heading < 120)
+	{
+		strip.setPixelColor(4, strip.Color(255, 255, 255));
+		strip.setPixelColor(11, strip.Color(255, 255, 255));
+		strip.setPixelColor(13, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 120 && heading < 150)
+	{
+		strip.setPixelColor(6, strip.Color(255, 255, 255));
+		strip.setPixelColor(7, strip.Color(255, 255, 255));
+		strip.setPixelColor(15, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 150 && heading < 210)
+	{
+		strip.setPixelColor(14, strip.Color(255, 255, 255));
+		strip.setPixelColor(23, strip.Color(255, 255, 255));
+		strip.setPixelColor(30, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 210 && heading < 240)
+	{
+		strip.setPixelColor(31, strip.Color(255, 255, 255));
+		strip.setPixelColor(38, strip.Color(255, 255, 255));
+		strip.setPixelColor(39, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 240 && heading < 300)
+	{
+		strip.setPixelColor(36, strip.Color(255, 255, 255));
+		strip.setPixelColor(29, strip.Color(255, 255, 255));
+		strip.setPixelColor(27, strip.Color(255, 255, 255));
+	}
+	
+	else if(heading > 300 && heading < 330)
+	{
+		strip.setPixelColor(24, strip.Color(255, 255, 255));
+		strip.setPixelColor(32, strip.Color(255, 255, 255));
+		strip.setPixelColor(33, strip.Color(255, 255, 255));
+	}
+	
+	strip.show();
 }
 
 #endif	// NEO_ON
@@ -404,21 +405,21 @@ Get valid GPS message. This function returns ONLY once a second.
 void getGPSMessage(void)
 
 Side affects:
-	Message is placed in global "cstr" string buffer.
+Message is placed in global "cstr" string buffer.
 
 Input:
-	none
+none
 
 Return:
-	none
-	
+none
+
 */
 void getGPSMessage(void)
 {
 	uint8_t x=0, y=0, isum=0;
 
 	memset(cstr, 0, sizeof(cstr));
-		
+	
 	// get name string
 	while (true)
 	{
@@ -440,12 +441,12 @@ void getGPSMessage(void)
 				cstr[x-2] = 0;
 
 				// if checksum not found
-				if (cstr[x-5] != '*') 
+				if (cstr[x-5] != '*')
 				{
 					x = 0;
 					continue;
 				}
-								
+				
 				// convert hex checksum to binary
 				isum = strtol(&cstr[x-4], NULL, 16);
 				
@@ -453,7 +454,7 @@ void getGPSMessage(void)
 				for (y=1; y < (x-5); y++) isum ^= cstr[y];
 				
 				// if invalid checksum
-				if (isum != 0) 
+				if (isum != 0)
 				{
 					x = 0;
 					continue;
@@ -473,19 +474,19 @@ Get simulated GPS message once a second.
 This is the same message and coordinates as described at the top of this
 file.  You could edit these coordinates to point to the tree out front (GEOLAT0,
 GEOLON0) to test your distance and direction calculations.  Just note that the
-tree coordinates are in Decimal Degrees format, and the message coordinates are 
+tree coordinates are in Decimal Degrees format, and the message coordinates are
 in Degrees Minutes format.
 
 void getGPSMessage(void)
 
 Side affects:
-	Static GPRMC message is placed in global "cstr" string buffer.
+Static GPRMC message is placed in global "cstr" string buffer.
 
 Input:
-	none
+none
 
 Return:
-	none
+none
 
 */
 void getGPSMessage(void)
@@ -499,43 +500,43 @@ void getGPSMessage(void)
 	gpsTime = millis() + 1000;
 	
 	memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
-    
-	return;	
+	
+	return;
 }
 
 #endif	// GPS_ON
 
 bool ParseGPSStringData()
 {
-    int Traveling = 0;
-    char data[GPS_RX_BUFSIZ];
-    
-    memcpy(data, cstr, sizeof(cstr));
-    
-    char* token = strtok(data, ",");
-    
-    while(token != NULL)
-    {
-        GpsData[Traveling] = token;
-        token = strtok(NULL, ",");
-        Traveling++;
-    }
-    
-    if (GpsData[VALIDATION].c_str()[0] == 'V')
-        return false;
-    
+	int Traveling = 0;
+	char data[GPS_RX_BUFSIZ];
+	
+	memcpy(data, cstr, sizeof(cstr));
+	
+	char* token = strtok(data, ",");
+	
+	while(token != NULL)
+	{
+		GpsData[Traveling] = token;
+		token = strtok(NULL, ",");
+		Traveling++;
+	}
+	
+	if (GpsData[VALIDATION].c_str()[0] == 'V')
+	return false;
+	
 	DMtoDDLongitude(GpsData[LONGITUDE], Longitude);
 	DMtoDDLatitude(GpsData[LATITUDE], Latitude);
-    N_S = GpsData[NS].c_str()[0];
-    E_W = GpsData[EW].c_str()[0];
+	N_S = GpsData[NS].c_str()[0];
+	E_W = GpsData[EW].c_str()[0];
 	if (N_S == 'S')
-		Latitude *= -1;
+	Latitude *= -1;
 	if (E_W == 'W')
-		Longitude *= -1;
-    Speed = GpsData[SPEED].toFloat();
-    CourseGround = GpsData[COURSEGROUND].toFloat();
-    
-    return true;
+	Longitude *= -1;
+	Speed = GpsData[SPEED].toFloat();
+	CourseGround = GpsData[COURSEGROUND].toFloat();
+	
+	return true;
 }
 
 
@@ -546,20 +547,20 @@ Main Program Entry
 int main(void)
 
 Input:
-	none
+none
 
 Return:
-	false
-	
+false
+
 */
 int main(void)
 {
 	// variables
 	Position OurPosition;
-    Position Destination;
-    Destination.lon(-81.3020153);
-    Destination.lat(28.5945306);
-    
+	Position Destination;
+	Destination.lon(-81.3020153);
+	Destination.lat(28.5945306);
+	
 	init();
 	
 	// init target button
@@ -567,29 +568,29 @@ int main(void)
 
 	#if TRM_ON
 	Serial.begin(115200);
-	#endif	
+	#endif
 	
 	#if ONE_ON
 	// init OneShield Shield
-    OneSheeld.begin();
+	OneSheeld.begin();
 	#endif
 	
 	#if NEO_ON
 	// init NeoPixel Shield
-    strip.begin();
-    strip.setBrightness(20);
-    strip.show();
-	#endif	
+	strip.begin();
+	strip.setBrightness(20);
+	strip.show();
+	#endif
 
 	#if SDC_ON
 	/*
 	Initialize the SecureDigitalCard and open a numbered sequenced file
-	name "MyMapNN.txt" for storing your coordinates, where NN is the 
+	name "MyMapNN.txt" for storing your coordinates, where NN is the
 	sequential number of the file.  The filename can not be more than 8
 	chars in length (excluding the ".txt").
 	*/
 	checkTheFile();
-	#endif                                                                                                                                                                                                   
+	#endif
 	
 	// enable GPS sending GPRMC message
 	#if GPS_ON
@@ -597,57 +598,73 @@ int main(void)
 	gps.println(PMTK_SET_NMEA_UPDATE_1HZ);
 	gps.println(PMTK_API_SET_FIX_CTL_1HZ);
 	gps.println(PMTK_SET_NMEA_OUTPUT_RMC);
-	#endif	
+	#endif
 	
 	while (true)
 	{
 		// if button pressed, set new target
 		
+		//save previous position for bearing calculation
 		// returns with message once a second
 		getGPSMessage();
-		
 		// if GPRMC message (3rd letter = R)
 		while (cstr[3] == 'R')
 		{
 			// parse message parameters
+			Position prevPos;
+			if(Latitude)
+				prevPos.lat(Latitude);
+			if(Longitude)
+				prevPos.lon(Longitude);
 			ParseGPSStringData();
+			
 
 			// calculated destination heading
 			OurPosition.lat(Latitude);
-            OurPosition.lon(Longitude);
-            heading = GreatCircleBearing(OurPosition, Destination);
-            
+			OurPosition.lon(Longitude);
+			heading = GreatCircleBearing(OurPosition, Destination);
+			
+			//calculate relative bearing
+			double relHead = GreatCircleBearing(prevPos,OurPosition);
+			
+			heading = relHead+heading;
+			
+			if(heading < 0)
+				heading += 360;
+			if(heading > 359)
+				heading -= 360;
+			
 			// calculated destination distance
 			distance = distance_in_meters(OurPosition, Destination);
-            
+			
 			#if SDC_ON
 			// write current position to SecureDigital then flush
 			WriteToSDCard(OurPosition, distance);
 			#endif
 
 			break;
-            
+			
 		}
 		
 		// set NeoPixel target display
 		#if NEO_ON
 		setNeoPixel(target, heading, distance);
-		#endif		
+		#endif
 
 		#if TRM_ON
 		// print debug information to Serial Terminal
-		Serial.println(cstr);	
-		#endif		
+		Serial.println(cstr);
+		#endif
 		
 		#if ONE_ON
 		// print debug information to OneSheeld Terminal
 		if (serialEventRun) serialEventRun();
-        Terminal.println(cstr);
-        Terminal.println(heading);
-        Terminal.println(distance);
-        Terminal.println(Longitude);
-        Terminal.println(Latitude);
-		#endif		
+		Terminal.println(cstr);
+		Terminal.println(heading);
+		Terminal.println(distance);
+		Terminal.println(Longitude);
+		Terminal.println(Latitude);
+		#endif
 	}
 	
 	return(false);
