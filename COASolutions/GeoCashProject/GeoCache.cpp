@@ -198,7 +198,6 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, NEO_TX, NEO_GRB + NEO_KHZ800);
 #if SDC_ON
 #include "SecureDigital.h"
 
-
 SDClass myFile;
 int fileNumber = 100;
 //String fileName = "myFile";
@@ -500,7 +499,7 @@ void getGPSMessage(void)
 	gpsTime = millis() + 1000;
 	
 	memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
-    //memcpy(cstr, gps.data(), sizeof(cstr));
+    
 
 
 	return;	
