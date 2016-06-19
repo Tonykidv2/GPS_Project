@@ -173,7 +173,7 @@ Hunt.
 #define NEO_ON 1		// NeoPixelShield
 #define TRM_ON 1		// SerialTerminal4
 #define ONE_ON 0		// 1Sheeld
-#define SDC_ON 1		// SecureDigital
+#define SDC_ON 0		// SecureDigital
 #define GPS_ON 1		// GPSShield (off = simulated)
 
 // define pin usage
@@ -625,6 +625,7 @@ int main(void)
 		}
 		else
 		    firstTime = false;
+            
 		//save previous position for bearing calculation
 		// returns with message once a second
 		getGPSMessage();
@@ -674,6 +675,10 @@ int main(void)
 		#if TRM_ON
 		// print debug information to Serial Terminal
 		Serial.println(cstr);
+        Serial.println(heading);
+        Serial.println(distance);
+        Serial.println(Longitude);
+        Serial.println(Latitude);
 		#endif
 		
 		#if ONE_ON
