@@ -66,7 +66,7 @@ A               // Mode A=Autonomous D=differential E=Estimated
 #define EW 6
 #define SPEED 7
 #define COURSEGROUND 8
-#define PIe 3.14159265358979323846264338327950288419716939937510
+#define PIe 3.141592653
 
 
 
@@ -79,26 +79,36 @@ A               // Mode A=Autonomous D=differential E=Estimated
 
 String GpsData[15];
 
-float Time;
+
 float Latitude;
 char N_S;
 float Longitude;
 char E_W;
 float CourseGround;
-float Speed;
+
 
 uint8_t target = 0;
 double heading = 20;
 double distance = 50;
 
-static const double DEG_TO_RAD = 0.017453292519943295769236907684886;
-static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
-static const double EARTH_RADIUS_IN_MILES = 3959;
+#define DEG_TO_RAD 0.0174532
+#define EARTH_RADIUS_IN_METERS 6372797.560856
+#define EARTH_RADIUS_IN_MILES 3959
 
+bool CheckingInput(int number)
+{
+    for (int x = 0; x < 1000; x++)
+    {
+        if(digitalRead(number))
+            return false;
+    }
+    return true;
+}
 
 
 void DMtoDDLongitude(String degreeMinutes, float& saveTo);
 void DMtoDDLatitude(String degreeMinutes, float& saveTo);
+
 
 struct Position
 {
@@ -119,28 +129,25 @@ double haversine(const Position& from, const Position& to)
 	lat_h *= lat_h;
 	double lon_h = sin(lon_arc * 0.5f);
 	lon_h *= lon_h;
-	double tmp = cos(from.lat()*DEG_TO_RAD) * cos(to.lat() * DEG_TO_RAD);
-	return 2.0f * asin(sqrt(lat_h + tmp * lon_h));
+	double tmp = cos(from.lat() * DEG_TO_RAD) * cos(to.lat() * DEG_TO_RAD);
+	return 2.0f * asin(sqrt(lat_h + tmp * lon_h)); 
 }
 
-double GreatCircleBearing(const Position& from, const Position& to)
+float GreatCircleBearing(const Position& from, const Position& to)
 {
-	double lat1 = (from.lat()) * DEG_TO_RAD;
-	double lat2 = (to.lat()) * DEG_TO_RAD;
-	double lon1 = (from.lon()) * DEG_TO_RAD;
-	double lon2 = (to.lon()) * DEG_TO_RAD;
+	float lat1 = from.lat() * DEG_TO_RAD;
+	float lat2 = to.lat() * DEG_TO_RAD;
+	float lon1 = from.lon() * DEG_TO_RAD;
+	float lon2 = to.lon() * DEG_TO_RAD;
 
-	double temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PIe;
-	if (temp < 0)
-	{
-		temp += 360;
-	}
-	if (temp > 359)
-	{
-		temp -= 360;
-	}
+	float temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PIe;
 
-	return temp;
+    if(temp < 0)
+    temp += 360;
+    if(temp > 359)
+    temp -= 360;
+
+	return temp;// * RAD_TO_DEG;
 }
 
 double distance_in_meters(const Position& from, const Position& to)
@@ -148,10 +155,10 @@ double distance_in_meters(const Position& from, const Position& to)
 	return EARTH_RADIUS_IN_METERS * haversine(from, to);
 }
 
-double distance_in_miles(const Position& from, const Position& to)
-{
-	return EARTH_RADIUS_IN_MILES * haversine(from, to);
-}
+//double distance_in_miles(const Position& from, const Position& to)
+//{
+	//return EARTH_RADIUS_IN_MILES * haversine(from, to);
+//}
 
 /*
 Configuration settings.
@@ -165,8 +172,8 @@ Hunt.
 */
 #define NEO_ON 1		// NeoPixelShield
 #define TRM_ON 1		// SerialTerminal4
-#define ONE_ON 1		// 1Sheeld
-#define SDC_ON 0		// SecureDigital
+#define ONE_ON 0		// 1Sheeld
+#define SDC_ON 1		// SecureDigital
 #define GPS_ON 1		// GPSShield (off = simulated)
 
 // define pin usage
@@ -177,7 +184,6 @@ Hunt.
 // GPS message buffer
 #define GPS_RX_BUFSIZ	128
 char cstr[GPS_RX_BUFSIZ];
-char pstr[GPS_RX_BUFSIZ] = 0;
 
 #if GPS_ON
 #include "SoftwareSerial.h"
@@ -202,27 +208,27 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, NEO_TX, NEO_GRB + NEO_KHZ800);
 SDClass myFile;
 int fileNumber = 100;
 //String fileName = "myFile";
-char fileName[55] = "myFile";
+char fileName[10] = "myFile";
 File m_file;
 
-void WriteToSDCard(Position pos, double dist_km)
+void WriteToSDCard(Position pos, float dist_km)
 {
-	String str1, str2, str3;
-	//sprintf(str1, "%d", pos.lat());
-	//sprintf(str2, "%d", pos.lon());
-	//sprintf(str3, "%d", dist_km);
-	str1 = String(pos.lat());
-	str2 = String(pos.lon());
-	str3 = String(dist_km);
+	//String str1, str2, str3;
+	////sprintf(str1, "%d", pos.lat());
+	////sprintf(str2, "%d", pos.lon());
+	////sprintf(str3, "%d", dist_km);
+	//str1 = String(pos.lat());
+	//str2 = String(pos.lon());
+	//str3 = String(dist_km);
 	
 	if(m_file)
 	{
-		m_file.print(str1.c_str(), 6);
+		m_file.print(pos.lat(), 6);
 		m_file.print(", ");
-		m_file.print(str2.c_str(), 6);
+		m_file.print(pos.lon(), 6);
 		m_file.print(", ");
-		m_file.println(str3.c_str(), 6);
-		
+		m_file.println(dist_km, 6);
+	
 		m_file.flush();
 		//m_file.close();
 	}
@@ -329,7 +335,7 @@ void setNeoPixel(uint8_t target, float heading, float distance)
 	color = strip.Color(255,0,255);
 	
 	//More LEDs in the middle as you get farther less when you get closer
-	for (int i = 18; i < 18 + NUMLEDs; i++)
+	for (int i = 17; i < 17 + NUMLEDs; i++)
 	{
 		strip.setPixelColor(i, color);
 		strip.show();
@@ -500,7 +506,7 @@ void getGPSMessage(void)
 	gpsTime = millis() + 1000;
 	
 	memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
-	
+
 	return;
 }
 
@@ -533,7 +539,6 @@ bool ParseGPSStringData()
 	Latitude *= -1;
 	if (E_W == 'W')
 	Longitude *= -1;
-	Speed = GpsData[SPEED].toFloat();
 	CourseGround = GpsData[COURSEGROUND].toFloat();
 	
 	return true;
@@ -553,18 +558,21 @@ Return:
 false
 
 */
+
+Position prevPos;
+
 int main(void)
 {
 	// variables
 	Position OurPosition;
 	Position Destination;
-	Destination.lon(-81.3020153);
-	Destination.lat(28.5945306);
-	
+	Destination.lon(-81.2938748);
+	Destination.lat(28.5959230);
+	pinMode(7, INPUT);
 	init();
 	
 	// init target button
-
+    //memcpy(pstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(pstr));
 
 	#if TRM_ON
 	Serial.begin(115200);
@@ -600,18 +608,31 @@ int main(void)
 	gps.println(PMTK_SET_NMEA_OUTPUT_RMC);
 	#endif
 	
+    bool firstTime = false;
+    
 	while (true)
 	{
 		// if button pressed, set new target
-		
+		if(CheckingInput(7))
+		{
+    		if(firstTime == false)
+    		{
+        		target++;
+                if(target > 3)
+                    target = 0;
+        		firstTime = true;
+    		}
+		}
+		else
+		    firstTime = false;
 		//save previous position for bearing calculation
 		// returns with message once a second
 		getGPSMessage();
+        
 		// if GPRMC message (3rd letter = R)
 		while (cstr[3] == 'R')
 		{
 			// parse message parameters
-			Position prevPos;
 			if(Latitude)
 				prevPos.lat(Latitude);
 			if(Longitude)
@@ -624,10 +645,9 @@ int main(void)
 			OurPosition.lon(Longitude);
 			heading = GreatCircleBearing(OurPosition, Destination);
 			
-			//calculate relative bearing
-			double relHead = GreatCircleBearing(prevPos,OurPosition);
-			
-			heading = relHead+heading;
+            			
+			//calculate relative bearing            
+			heading = heading - CourseGround;
 			
 			if(heading < 0)
 				heading += 360;
@@ -680,10 +700,10 @@ void DMtoDDLongitude(String degreeMinutes, float& saveTo)
 		else
 		minutes += degreeMinutes[i];
 	}
-	float deg = degrees.toFloat();
-	float min = minutes.toFloat();
+	//float deg = degrees.toFloat();
+	//float min = minutes.toFloat();
 
-	saveTo = deg + min / 60;
+	saveTo = degrees.toFloat() + minutes.toFloat() / 60;
 }
 
 void DMtoDDLatitude(String degreeMinutes, float& saveTo)
@@ -696,8 +716,9 @@ void DMtoDDLatitude(String degreeMinutes, float& saveTo)
 		else
 		minutes += degreeMinutes[i];
 	}
-	float deg = degrees.toFloat();
-	float min = minutes.toFloat();
+	//float deg = degrees.toFloat();
+	//float min = minutes.toFloat();
 
-	saveTo = deg + min / 60;
+	saveTo = degrees.toFloat() + minutes.toFloat() / 60;
 }
+
