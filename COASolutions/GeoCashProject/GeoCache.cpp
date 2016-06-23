@@ -100,7 +100,7 @@ bool CheckingInput(int number)
     for (int x = 0; x < 1000; x++)
     {
         if(digitalRead(number))
-            return false;
+        return false;
     }
     return true;
 }
@@ -112,52 +112,52 @@ void DMtoDDLatitude(String degreeMinutes, float& saveTo);
 
 struct Position
 {
-	//Position(double lat, double lon) : _lat(lat), _lon(lon) {}
-	void lat(double lat) { _lat = lat; }
-	double lat()const { return _lat; }
-	void lon(double lon) { _lon = lon; }
-	double lon()const { return _lon; }
-	private:
-	double _lat, _lon;
+    //Position(double lat, double lon) : _lat(lat), _lon(lon) {}
+    void lat(double lat) { _lat = lat; }
+    double lat()const { return _lat; }
+    void lon(double lon) { _lon = lon; }
+    double lon()const { return _lon; }
+    private:
+    double _lat, _lon;
 };
 
 double haversine(const Position& from, const Position& to)
 {
-	double lat_arc = (from.lat() - to.lat()) * DEG_TO_RAD;
-	double lon_arc = (from.lon() - to.lon()) * DEG_TO_RAD;
-	double lat_h = sin(lat_arc * 0.5f);
-	lat_h *= lat_h;
-	double lon_h = sin(lon_arc * 0.5f);
-	lon_h *= lon_h;
-	double tmp = cos(from.lat() * DEG_TO_RAD) * cos(to.lat() * DEG_TO_RAD);
-	return 2.0f * asin(sqrt(lat_h + tmp * lon_h)); 
+    double lat_arc = (from.lat() - to.lat()) * DEG_TO_RAD;
+    double lon_arc = (from.lon() - to.lon()) * DEG_TO_RAD;
+    double lat_h = sin(lat_arc * 0.5f);
+    lat_h *= lat_h;
+    double lon_h = sin(lon_arc * 0.5f);
+    lon_h *= lon_h;
+    double tmp = cos(from.lat() * DEG_TO_RAD) * cos(to.lat() * DEG_TO_RAD);
+    return 2.0f * asin(sqrt(lat_h + tmp * lon_h));
 }
 
-float GreatCircleBearing(const Position& from, const Position& to)
+double GreatCircleBearing(const Position& from, const Position& to)
 {
-	float lat1 = from.lat() * DEG_TO_RAD;
-	float lat2 = to.lat() * DEG_TO_RAD;
-	float lon1 = from.lon() * DEG_TO_RAD;
-	float lon2 = to.lon() * DEG_TO_RAD;
+    double lat1 = from.lat() * DEG_TO_RAD;
+    double lat2 = to.lat() * DEG_TO_RAD;
+    double lon1 = from.lon() * DEG_TO_RAD;
+    double lon2 = to.lon() * DEG_TO_RAD;
 
-	float temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PIe;
+    double temp =  atan2(sin(lon2 - lon1) * cos(lat2), cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon2 - lon1)) * 180/PIe;
 
     if(temp < 0)
     temp += 360;
     if(temp > 359)
     temp -= 360;
 
-	return temp;// * RAD_TO_DEG;
+    return temp;// * RAD_TO_DEG;
 }
 
 double distance_in_meters(const Position& from, const Position& to)
 {
-	return EARTH_RADIUS_IN_METERS * haversine(from, to);
+    return EARTH_RADIUS_IN_METERS * haversine(from, to);
 }
 
 //double distance_in_miles(const Position& from, const Position& to)
 //{
-	//return EARTH_RADIUS_IN_MILES * haversine(from, to);
+//return EARTH_RADIUS_IN_MILES * haversine(from, to);
 //}
 
 /*
@@ -171,9 +171,9 @@ have NEO_ON, GPS_ON and SDC_ON during the actual GeoCache Treasure
 Hunt.
 */
 #define NEO_ON 1		// NeoPixelShield
-#define TRM_ON 1		// SerialTerminal4
+#define TRM_ON 0		// SerialTerminal4
 #define ONE_ON 0		// 1Sheeld
-#define SDC_ON 0		// SecureDigital
+#define SDC_ON 1		// SecureDigital
 #define GPS_ON 1		// GPSShield (off = simulated)
 
 // define pin usage
@@ -205,64 +205,68 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(40, NEO_TX, NEO_GRB + NEO_KHZ800);
 #if SDC_ON
 #include "SecureDigital.h"
 
-SDClass myFile;
-int fileNumber = 100;
+//SDClass myFile;
+int fileNumber = 0;
 //String fileName = "myFile";
-char fileName[10] = "myFile";
+char fileName[16] = "myFile";
 File m_file;
 
 void WriteToSDCard(Position pos, float dist_km)
 {
-	//String str1, str2, str3;
-	////sprintf(str1, "%d", pos.lat());
-	////sprintf(str2, "%d", pos.lon());
-	////sprintf(str3, "%d", dist_km);
-	//str1 = String(pos.lat());
-	//str2 = String(pos.lon());
-	//str3 = String(dist_km);
-	
-	if(m_file)
-	{
-		m_file.print(pos.lat(), 6);
-		m_file.print(", ");
-		m_file.print(pos.lon(), 6);
-		m_file.print(", ");
-		m_file.println(dist_km, 6);
-	
-		m_file.flush();
-		//m_file.close();
-	}
+    //String str1, str2, str3;
+    ////sprintf(str1, "%d", pos.lat());
+    ////sprintf(str2, "%d", pos.lon());
+    ////sprintf(str3, "%d", dist_km);
+    //str1 = String(pos.lat());
+    //str2 = String(pos.lon());
+    //str3 = String(dist_km);
+    
+    if(m_file)
+    {
+        m_file.print(pos.lon(), 6);
+        m_file.print(", ");
+        m_file.print(pos.lat(), 6);
+        m_file.print(", ");
+        m_file.println(dist_km, 6);
+        
+        m_file.flush();
+        //m_file.close();
+    }
 }
 
 bool checkTheFile()
 {
-	/*while(myFile.exists(&fileName[0]))
-	{
-	fileName[7]++;
-	if(fileName >= 10)
-	{
-	fileName[7] = 0;
-	fileName[6]++;
-	}
-	}
+    /*while(myFile.exists(&fileName[0]))
+    {
+    fileName[7]++;
+    if(fileName >= 10)
+    {
+    fileName[7] = 0;
+    fileName[6]++;
+    }
+    }
 
-	myFile.begin();
-	m_file = myFile.open(fileName, O_APPEND | O_WRITE);*/
+    myFile.begin();
+    m_file = myFile.open(fileName, O_APPEND | O_WRITE);*/
 
-	myFile.begin();
-
-	for(int i = 0; i < fileNumber; i++)
-	{
-		sprintf(fileName, "myFile%20d", fileNumber);
-		
-		if(!(myFile.exists(&fileName[0])))
-		{
-			m_file = myFile.open(fileName, O_APPEND | O_WRITE);
-			break;
-		}
-	}
-	
-	return true;
+    
+    if (SD.begin())
+    {
+        
+        for(int i = 0; i < 100; i++)
+        {
+            sprintf(fileName, "myFile%d.txt", i);
+            
+            if(!(SD.exists(fileName)))
+            {
+                m_file = SD.open(fileName, FILE_WRITE);
+                break;
+            }
+            
+        }
+    }
+    
+    return true;
 }
 
 #endif
@@ -306,100 +310,100 @@ Sets target number, heading and distance on NeoPixel Display
 */
 void setNeoPixel(uint8_t target, float heading, float distance)
 {
-	//Clearing LEDs
-	for (int i = 0; i < 40; i++)
-	{
-		strip.setPixelColor(i, strip.Color(0, 0, 0));
-		strip.show();
-	}
-	
-	// add code here0
-	int NUMLEDs = 6;
-	
-	if(distance < 100)
-	{
-		NUMLEDs = distance / 16.66;
-	}
-	
-	uint32_t color = 0;
-	if(target == 0)
-	color = strip.Color(255,0,0);
-	
-	else if(target == 1)
-	color = strip.Color(0,255,0);
-	
-	else if(target == 2)
-	color = strip.Color(0,0,255);
-	
-	else if(target == 3)
-	color = strip.Color(255,0,255);
-	
-	//More LEDs in the middle as you get farther less when you get closer
-	for (int i = 17; i < 17 + NUMLEDs; i++)
-	{
-		strip.setPixelColor(i, color);
-		strip.show();
-	}
-	
-	
-	//Which Direction Simple Arrows
-	if((heading > 330) || (heading > 0 && heading < 30))
-	{
-		strip.setPixelColor(9, strip.Color(255, 255, 255));
-		strip.setPixelColor(16, strip.Color(255, 255, 255));
-		strip.setPixelColor(25, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 30 &&  heading < 60)
-	{
-		strip.setPixelColor(8, strip.Color(255, 255, 255));
-		strip.setPixelColor(0, strip.Color(255, 255, 255));
-		strip.setPixelColor(1, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 60 && heading < 120)
-	{
-		strip.setPixelColor(4, strip.Color(255, 255, 255));
-		strip.setPixelColor(11, strip.Color(255, 255, 255));
-		strip.setPixelColor(13, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 120 && heading < 150)
-	{
-		strip.setPixelColor(6, strip.Color(255, 255, 255));
-		strip.setPixelColor(7, strip.Color(255, 255, 255));
-		strip.setPixelColor(15, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 150 && heading < 210)
-	{
-		strip.setPixelColor(14, strip.Color(255, 255, 255));
-		strip.setPixelColor(23, strip.Color(255, 255, 255));
-		strip.setPixelColor(30, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 210 && heading < 240)
-	{
-		strip.setPixelColor(31, strip.Color(255, 255, 255));
-		strip.setPixelColor(38, strip.Color(255, 255, 255));
-		strip.setPixelColor(39, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 240 && heading < 300)
-	{
-		strip.setPixelColor(36, strip.Color(255, 255, 255));
-		strip.setPixelColor(29, strip.Color(255, 255, 255));
-		strip.setPixelColor(27, strip.Color(255, 255, 255));
-	}
-	
-	else if(heading > 300 && heading < 330)
-	{
-		strip.setPixelColor(24, strip.Color(255, 255, 255));
-		strip.setPixelColor(32, strip.Color(255, 255, 255));
-		strip.setPixelColor(33, strip.Color(255, 255, 255));
-	}
-	
-	strip.show();
+    //Clearing LEDs
+    for (int i = 0; i < 40; i++)
+    {
+        strip.setPixelColor(i, strip.Color(0, 0, 0));
+        //strip.show();
+    }
+    
+    // add code here0
+    int NUMLEDs = 6;
+    
+    if(distance < 100)
+    {
+        NUMLEDs = distance / 16.66;
+    }
+    
+    uint32_t color = 0;
+    if(target == 0)
+    color = strip.Color(255,0,0);
+    
+    else if(target == 1)
+    color = strip.Color(0,255,0);
+    
+    else if(target == 2)
+    color = strip.Color(0,0,255);
+    
+    else if(target == 3)
+    color = strip.Color(255,0,255);
+    
+    //More LEDs in the middle as you get farther less when you get closer
+    for (int i = 17; i < 17 + NUMLEDs; i++)
+    {
+        strip.setPixelColor(i, color);
+        strip.show();
+    }
+    
+    
+    //Which Direction Simple Arrows
+    if((heading > 330) || (heading > 0 && heading < 30))
+    {
+        strip.setPixelColor(9, strip.Color(255, 255, 255));
+        strip.setPixelColor(16, strip.Color(255, 255, 255));
+        strip.setPixelColor(25, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 30 &&  heading < 60)
+    {
+        strip.setPixelColor(8, strip.Color(255, 255, 255));
+        strip.setPixelColor(0, strip.Color(255, 255, 255));
+        strip.setPixelColor(1, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 60 && heading < 120)
+    {
+        strip.setPixelColor(4, strip.Color(255, 255, 255));
+        strip.setPixelColor(11, strip.Color(255, 255, 255));
+        strip.setPixelColor(13, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 120 && heading < 150)
+    {
+        strip.setPixelColor(6, strip.Color(255, 255, 255));
+        strip.setPixelColor(7, strip.Color(255, 255, 255));
+        strip.setPixelColor(15, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 150 && heading < 210)
+    {
+        strip.setPixelColor(14, strip.Color(255, 255, 255));
+        strip.setPixelColor(23, strip.Color(255, 255, 255));
+        strip.setPixelColor(30, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 210 && heading < 240)
+    {
+        strip.setPixelColor(31, strip.Color(255, 255, 255));
+        strip.setPixelColor(38, strip.Color(255, 255, 255));
+        strip.setPixelColor(39, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 240 && heading < 300)
+    {
+        strip.setPixelColor(36, strip.Color(255, 255, 255));
+        strip.setPixelColor(29, strip.Color(255, 255, 255));
+        strip.setPixelColor(27, strip.Color(255, 255, 255));
+    }
+    
+    else if(heading > 300 && heading < 330)
+    {
+        strip.setPixelColor(24, strip.Color(255, 255, 255));
+        strip.setPixelColor(32, strip.Color(255, 255, 255));
+        strip.setPixelColor(33, strip.Color(255, 255, 255));
+    }
+    
+    strip.show();
 }
 
 #endif	// NEO_ON
@@ -422,55 +426,55 @@ none
 */
 void getGPSMessage(void)
 {
-	uint8_t x=0, y=0, isum=0;
+    uint8_t x=0, y=0, isum=0;
 
-	memset(cstr, 0, sizeof(cstr));
-	
-	// get name string
-	while (true)
-	{
-		if (gps.peek() != -1)
-		{
-			cstr[x] = gps.read();
-			
-			// if multiple inline messages, then restart
-			if ((x != 0) && (cstr[x] == '$'))
-			{
-				x = 0;
-				cstr[x] = '$';
-			}
-			
-			// if complete message
-			if ((cstr[0] == '$') && (cstr[x++] == '\n'))
-			{
-				// nul terminate string before /r/n
-				cstr[x-2] = 0;
+    memset(cstr, 0, sizeof(cstr));
+    
+    // get name string
+    while (true)
+    {
+        if (gps.peek() != -1)
+        {
+            cstr[x] = gps.read();
+            
+            // if multiple inline messages, then restart
+            if ((x != 0) && (cstr[x] == '$'))
+            {
+                x = 0;
+                cstr[x] = '$';
+            }
+            
+            // if complete message
+            if ((cstr[0] == '$') && (cstr[x++] == '\n'))
+            {
+                // nul terminate string before /r/n
+                cstr[x-2] = 0;
 
-				// if checksum not found
-				if (cstr[x-5] != '*')
-				{
-					x = 0;
-					continue;
-				}
-				
-				// convert hex checksum to binary
-				isum = strtol(&cstr[x-4], NULL, 16);
-				
-				// reverse checksum
-				for (y=1; y < (x-5); y++) isum ^= cstr[y];
-				
-				// if invalid checksum
-				if (isum != 0)
-				{
-					x = 0;
-					continue;
-				}
-				
-				// else valid message
-				break;
-			}
-		}
-	}
+                // if checksum not found
+                if (cstr[x-5] != '*')
+                {
+                    x = 0;
+                    continue;
+                }
+                
+                // convert hex checksum to binary
+                isum = strtol(&cstr[x-4], NULL, 16);
+                
+                // reverse checksum
+                for (y=1; y < (x-5); y++) isum ^= cstr[y];
+                
+                // if invalid checksum
+                if (isum != 0)
+                {
+                    x = 0;
+                    continue;
+                }
+                
+                // else valid message
+                break;
+            }
+        }
+    }
 }
 
 #else
@@ -497,51 +501,51 @@ none
 */
 void getGPSMessage(void)
 {
-	static unsigned long gpsTime = 0;
-	
-	// simulate waiting for message
-	while (gpsTime > millis()) delay(100);
-	
-	// do this once a second
-	gpsTime = millis() + 1000;
-	
-	memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
+    static unsigned long gpsTime = 0;
+    
+    // simulate waiting for message
+    while (gpsTime > millis()) delay(100);
+    
+    // do this once a second
+    gpsTime = millis() + 1000;
+    
+    memcpy(cstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(cstr));
 
-	return;
+    return;
 }
 
 #endif	// GPS_ON
 
 bool ParseGPSStringData()
 {
-	int Traveling = 0;
-	char data[GPS_RX_BUFSIZ];
-	
-	memcpy(data, cstr, sizeof(cstr));
-	
-	char* token = strtok(data, ",");
-	
-	while(token != NULL)
-	{
-		GpsData[Traveling] = token;
-		token = strtok(NULL, ",");
-		Traveling++;
-	}
-	
-	if (GpsData[VALIDATION].c_str()[0] == 'V')
-	return false;
-	
-	DMtoDDLongitude(GpsData[LONGITUDE], Longitude);
-	DMtoDDLatitude(GpsData[LATITUDE], Latitude);
-	N_S = GpsData[NS].c_str()[0];
-	E_W = GpsData[EW].c_str()[0];
-	if (N_S == 'S')
-	Latitude *= -1;
-	if (E_W == 'W')
-	Longitude *= -1;
-	CourseGround = GpsData[COURSEGROUND].toFloat();
-	
-	return true;
+    int Traveling = 0;
+    char data[GPS_RX_BUFSIZ];
+    
+    memcpy(data, cstr, sizeof(cstr));
+    
+    char* token = strtok(data, ",");
+    
+    while(token != NULL)
+    {
+        GpsData[Traveling] = token;
+        token = strtok(NULL, ",");
+        Traveling++;
+    }
+    
+    if (GpsData[VALIDATION].c_str()[0] == 'V')
+    return false;
+    
+    DMtoDDLongitude(GpsData[LONGITUDE], Longitude);
+    DMtoDDLatitude(GpsData[LATITUDE], Latitude);
+    N_S = GpsData[NS].c_str()[0];
+    E_W = GpsData[EW].c_str()[0];
+    if (N_S == 'S')
+    Latitude *= -1;
+    if (E_W == 'W')
+    Longitude *= -1;
+    CourseGround = GpsData[COURSEGROUND].toFloat();
+    
+    return true;
 }
 
 
@@ -563,167 +567,167 @@ Position prevPos;
 
 int main(void)
 {
-	// variables
-	Position OurPosition;
-	Position Destination;
-	Destination.lon(-81.2938748);
-	Destination.lat(28.5959230);
-	pinMode(7, INPUT);
-	init();
-	
-	// init target button
+    init();
+
+    // variables
+    Position OurPosition;
+    Position Destination;
+    Destination.lon(-81.3043481);
+    Destination.lat(28.5956498);
+    pinMode(2, INPUT_PULLUP);
+    
+    // init target button
     //memcpy(pstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(pstr));
 
-	#if TRM_ON
-	Serial.begin(115200);
-	#endif
-	
-	#if ONE_ON
-	// init OneShield Shield
-	OneSheeld.begin();
-	#endif
-	
-	#if NEO_ON
-	// init NeoPixel Shield
-	strip.begin();
-	strip.setBrightness(20);
-	strip.show();
-	#endif
+    #if TRM_ON
+    Serial.begin(115200);
+    #endif
+    
+    #if ONE_ON
+    // init OneShield Shield
+    OneSheeld.begin();
+    #endif
+    
+    #if NEO_ON
+    // init NeoPixel Shield
+    strip.begin();
+    strip.setBrightness(20);
+    strip.show();
+    #endif
 
-	#if SDC_ON
-	/*
-	Initialize the SecureDigitalCard and open a numbered sequenced file
-	name "MyMapNN.txt" for storing your coordinates, where NN is the
-	sequential number of the file.  The filename can not be more than 8
-	chars in length (excluding the ".txt").
-	*/
-	checkTheFile();
-	#endif
-	
-	// enable GPS sending GPRMC message
-	#if GPS_ON
-	gps.begin(9600);
-	gps.println(PMTK_SET_NMEA_UPDATE_1HZ);
-	gps.println(PMTK_API_SET_FIX_CTL_1HZ);
-	gps.println(PMTK_SET_NMEA_OUTPUT_RMC);
-	#endif
-	
+    #if SDC_ON
+    /*
+    Initialize the SecureDigitalCard and open a numbered sequenced file
+    name "MyMapNN.txt" for storing your coordinates, where NN is the
+    sequential number of the file.  The filename can not be more than 8
+    chars in length (excluding the ".txt").
+    */
+    checkTheFile();
+    #endif
+    
+    // enable GPS sending GPRMC message
+    #if GPS_ON
+    gps.begin(9600);
+    gps.println(PMTK_SET_NMEA_UPDATE_1HZ);
+    gps.println(PMTK_API_SET_FIX_CTL_1HZ);
+    gps.println(PMTK_SET_NMEA_OUTPUT_RMC);
+    #endif
+    
     bool firstTime = false;
     
-	while (true)
-	{
-		// if button pressed, set new target
-		if(CheckingInput(7))
-		{
-    		if(firstTime == false)
-    		{
-        		target++;
+    while (true)
+    {
+        // if button pressed, set new target
+        if(CheckingInput(2))
+        {
+            if(firstTime == false)
+            {
+                target++;
                 if(target > 3)
-                    target = 0;
-        		firstTime = true;
-    		}
-		}
-		else
-		    firstTime = false;
-            
-		//save previous position for bearing calculation
-		// returns with message once a second
-		getGPSMessage();
+                target = 0;
+                firstTime = true;
+            }
+        }
+        else
+        firstTime = false;
         
-		// if GPRMC message (3rd letter = R)
-		while (cstr[3] == 'R')
-		{
-			// parse message parameters
-			if(Latitude)
-				prevPos.lat(Latitude);
-			if(Longitude)
-				prevPos.lon(Longitude);
-			ParseGPSStringData();
-			
+        //save previous position for bearing calculation
+        // returns with message once a second
+        getGPSMessage();
+        
+        // if GPRMC message (3rd letter = R)
+        while (cstr[3] == 'R')
+        {
+            // parse message parameters
+            if(Latitude)
+            prevPos.lat(Latitude);
+            if(Longitude)
+            prevPos.lon(Longitude);
+            ParseGPSStringData();
+            
+            // calculated destination heading
+            OurPosition.lat(Latitude);
+            OurPosition.lon(Longitude);
+            heading = GreatCircleBearing(OurPosition, Destination);
+            
+            
+            //calculate relative bearing
+            heading = heading - CourseGround;
+            
+            if(heading < 0)
+            heading += 360;
+            if(heading > 359)
+            heading -= 360;
+            
+            // calculated destination distance
+            distance = distance_in_meters(OurPosition, Destination);
+            
+            #if SDC_ON
+            // write current position to SecureDigital then flush
+            WriteToSDCard(OurPosition, distance);
+            #endif
 
-			// calculated destination heading
-			OurPosition.lat(Latitude);
-			OurPosition.lon(Longitude);
-			heading = GreatCircleBearing(OurPosition, Destination);
-			
-            			
-			//calculate relative bearing            
-			heading = heading - CourseGround;
-			
-			if(heading < 0)
-				heading += 360;
-			if(heading > 359)
-				heading -= 360;
-			
-			// calculated destination distance
-			distance = distance_in_meters(OurPosition, Destination);
-			
-			#if SDC_ON
-			// write current position to SecureDigital then flush
-			WriteToSDCard(OurPosition, distance);
-			#endif
+            break;
+            
+        }
+        
+        // set NeoPixel target display
+        #if NEO_ON
+        setNeoPixel(target, heading, distance);
+        #endif
 
-			break;
-			
-		}
-		
-		// set NeoPixel target display
-		#if NEO_ON
-		setNeoPixel(target, heading, distance);
-		#endif
-
-		#if TRM_ON
-		// print debug information to Serial Terminal
-		Serial.println(cstr);
+        #if TRM_ON
+        // print debug information to Serial Terminal
+        Serial.println(cstr);
         Serial.println(heading);
         Serial.println(distance);
         Serial.println(Longitude);
         Serial.println(Latitude);
-		#endif
-		
-		#if ONE_ON
-		// print debug information to OneSheeld Terminal
-		if (serialEventRun) serialEventRun();
-		Terminal.println(cstr);
-		Terminal.println(heading);
-		Terminal.println(distance);
-		Terminal.println(Longitude);
-		Terminal.println(Latitude);
-		#endif
-	}
-	
-	return(false);
+        #endif
+        
+        #if ONE_ON
+        // print debug information to OneSheeld Terminal
+        if (serialEventRun) serialEventRun();
+        Terminal.println(cstr);
+        Terminal.println(heading);
+        Terminal.println(distance);
+        Terminal.println(Longitude);
+        Terminal.println(Latitude);
+        #endif
+    }
+    
+    return(false);
 }
 
 void DMtoDDLongitude(String degreeMinutes, float& saveTo)
 {
-	String degrees, minutes;
-	for (unsigned int i = 0; i < degreeMinutes.length(); i++)
-	{
-		if (i  < 3)
-		degrees += degreeMinutes[i];
-		else
-		minutes += degreeMinutes[i];
-	}
-	//float deg = degrees.toFloat();
-	//float min = minutes.toFloat();
+    String degrees, minutes;
+    for (unsigned int i = 0; i < degreeMinutes.length(); i++)
+    {
+        if (i  < 3)
+        degrees += degreeMinutes[i];
+        else
+        minutes += degreeMinutes[i];
+    }
+    //float deg = degrees.toFloat();
+    //float min = minutes.toFloat();
 
-	saveTo = degrees.toFloat() + minutes.toFloat() / 60;
+    saveTo = degrees.toFloat() + minutes.toFloat() / 60;
 }
 
 void DMtoDDLatitude(String degreeMinutes, float& saveTo)
 {
-	String degrees, minutes;
-	for (unsigned int i = 0; i < degreeMinutes.length(); i++)
-	{
-		if (i  < 2)
-		degrees += degreeMinutes[i];
-		else
-		minutes += degreeMinutes[i];
-	}
-	//float deg = degrees.toFloat();
-	//float min = minutes.toFloat();
+    String degrees, minutes;
+    for (unsigned int i = 0; i < degreeMinutes.length(); i++)
+    {
+        if (i  < 2)
+        degrees += degreeMinutes[i];
+        else
+        minutes += degreeMinutes[i];
+    }
+    //float deg = degrees.toFloat();
+    //float min = minutes.toFloat();
 
-	saveTo = degrees.toFloat() + minutes.toFloat() / 60;
+    saveTo = degrees.toFloat() + minutes.toFloat() / 60;
 }
 
