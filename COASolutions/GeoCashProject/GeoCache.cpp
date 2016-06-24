@@ -571,9 +571,16 @@ int main(void)
 
     // variables
     Position OurPosition;
-    Position Destination;
-    Destination.lon(-81.3043481);
-    Destination.lat(28.5956498);
+    Position Destination[4];
+    Destination[0].lon(-81.305671);
+    Destination[0].lat(28.594096);
+    Destination[1].lon(-81.305649);
+    Destination[1].lat(28.595387);
+    Destination[2].lon(-81.304356);
+    Destination[2].lat(28.595458);
+    Destination[3].lon(-81.304334);
+    Destination[3].lat(28.594488);
+    
     pinMode(2, INPUT_PULLUP);
     
     // init target button
@@ -614,7 +621,7 @@ int main(void)
     #endif
     
     bool firstTime = false;
-    
+    target = 0;
     while (true)
     {
         // if button pressed, set new target
@@ -648,7 +655,7 @@ int main(void)
             // calculated destination heading
             OurPosition.lat(Latitude);
             OurPosition.lon(Longitude);
-            heading = GreatCircleBearing(OurPosition, Destination);
+            heading = GreatCircleBearing(OurPosition, Destination[target]);
             
             
             //calculate relative bearing
@@ -660,7 +667,7 @@ int main(void)
             heading -= 360;
             
             // calculated destination distance
-            distance = distance_in_meters(OurPosition, Destination);
+            distance = distance_in_meters(OurPosition, Destination[target]);
             
             #if SDC_ON
             // write current position to SecureDigital then flush
