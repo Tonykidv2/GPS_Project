@@ -7,11 +7,11 @@ are not required to follow this coding structure.  You are free to implement
 your project however you wish.
 
 List Team Members Here:
-
-1.
-2.
-3.
-4.
+        Team 2
+1. Anthony RamosLebron
+2. Jessica John
+3. Hedley Cayasso
+4. Matthew Phillips
 
 NOTES:
 
@@ -572,19 +572,19 @@ int main(void)
     // variables
     Position OurPosition;
     Position Destination[4];
-    Destination[0].lon(-81.305671);
-    Destination[0].lat(28.594096);
-    Destination[1].lon(-81.305649);
-    Destination[1].lat(28.595387);
-    Destination[2].lon(-81.304356);
-    Destination[2].lat(28.595458);
-    Destination[3].lon(-81.304334);
-    Destination[3].lat(28.594488);
+    Destination[0].lon(-81.30205);
+    Destination[0].lat(28.59671);
+    Destination[1].lon(-81.30407);
+    Destination[1].lat(28.59208);
+    Destination[2].lon(-81.30538);
+    Destination[2].lat(28.5962);
+    Destination[3].lon(-81.30357);
+    Destination[3].lat(28.5956);
     
-    pinMode(2, INPUT_PULLUP);
     
     // init target button
-    //memcpy(pstr, "$GPRMC,064951.000,A,2307.1256,N,12016.4438,E,0.03,165.48,260406,3.05,W,A*2C", sizeof(pstr));
+    pinMode(2, INPUT_PULLUP);
+    
 
     #if TRM_ON
     Serial.begin(115200);
@@ -622,6 +622,7 @@ int main(void)
     
     bool firstTime = false;
     target = 0;
+    
     while (true)
     {
         // if button pressed, set new target
@@ -636,7 +637,7 @@ int main(void)
             }
         }
         else
-        firstTime = false;
+            firstTime = false;
         
         //save previous position for bearing calculation
         // returns with message once a second
@@ -645,11 +646,13 @@ int main(void)
         // if GPRMC message (3rd letter = R)
         while (cstr[3] == 'R')
         {
+
             // parse message parameters
             if(Latitude)
-            prevPos.lat(Latitude);
+                prevPos.lat(Latitude);
             if(Longitude)
-            prevPos.lon(Longitude);
+                prevPos.lon(Longitude);
+                
             ParseGPSStringData();
             
             // calculated destination heading
